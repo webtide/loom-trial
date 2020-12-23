@@ -4,13 +4,58 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class DnaStack
 {
-    public final Random RANDOM = new SecureRandom();
-    public int maxDepth;
+    private final Random RANDOM = new Random();
+
+    private static final LongAdder result = new LongAdder();
+
+    static void warmup(Sample sample, int maxDepth)
+    {
+        DnaStack dna = new DnaStack();
+        try
+        {
+            String d = dna.next("", s -> s.length() >= maxDepth, l -> l.get(Math.abs(l.get(0).hashCode()) % l.size()));
+            System.err.printf("%s: %s%n", Thread.currentThread(), d);
+            result.add(d.hashCode());
+            sample.add(dna.getMaxDepth());
+        }
+        catch(Throwable t)
+        {
+            System.err.printf("%s: max=%d, %s%n", Thread.currentThread(), maxDepth, t.toString());
+        }
+    }
+
+    public static void warmup() throws Exception
+    {
+        Sample kThreadSample = new Sample();
+        Sample vThreadSample = new Sample();
+
+        // Warm up the JIT with real examples so that it actually expects real recursion
+        for (int i = 1; i < 1000; i++)
+        {
+            final int warmup = i;
+            Thread.builder().task(() -> DnaStack.warmup(kThreadSample, warmup)).start().join();
+            Thread.builder().virtual().task(() -> DnaStack.warmup(vThreadSample, warmup)).start().join();
+
+            System.err.println("WARMUP result: " + result.longValue());
+            System.err.println("WARMUP kthread maxDepth: " + kThreadSample);
+            System.err.println("WARMUP vthread maxDepth: " + vThreadSample);
+            kThreadSample.reset();
+            vThreadSample.reset();
+        }
+    }
+
+    public int getMaxDepth()
+    {
+        return maxDepth;
+    }
+
+    private int maxDepth;
 
     public String next(String dna, Predicate<String> evolved, Function<List<String>, String> fittest)
     {
@@ -18,21 +63,23 @@ public class DnaStack
             maxDepth = dna.length();
         return switch ("ACGT".charAt(RANDOM.nextInt(4)))
             {
-                case 'A' -> proteinA(dna, evolved, fittest);
-                case 'C' -> proteinC(dna, evolved, fittest);
-                case 'G' -> proteinG(dna, evolved, fittest);
-                case 'T' -> proteinT(dna, evolved, fittest);
+                case 'A' -> proteinA(dna + 'A', evolved, fittest);
+                case 'C' -> proteinC(dna + 'C', evolved, fittest);
+                case 'G' -> proteinG(dna + 'G', evolved, fittest);
+                case 'T' -> proteinT(dna + 'T', evolved, fittest);
                 default -> throw new IllegalStateException();
             };
     }
 
     public String proteinA(String dna, Predicate<String> evolved, Function<List<String>, String> fittest)
     {
-        dna = dna + 'A';
         if (evolved.test(dna))
             return dna;
 
-        int m = 1 + RANDOM.nextInt(7);
+        if (dna.hashCode() % 256 != 0)
+            return next(dna, evolved, fittest);
+
+        int m = 1 + RANDOM.nextInt(3);
         List<String> mutations = new ArrayList<>(m);
         for (int i = 0; i < m; i++)
         {
@@ -43,22 +90,19 @@ public class DnaStack
 
     public String proteinC(String dna, Predicate<String> evolved, Function<List<String>, String> fittest)
     {
-        dna = dna + 'C';
         if (evolved.test(dna))
             return dna;
 
-        String dnaA = proteinA(dna, evolved, fittest);
-        String dnaC = proteinC(dna, evolved, fittest);
-        String dnaG = proteinG(dna, evolved, fittest);
-        String dnaT = proteinT(dna, evolved, fittest);
-        return fittest.apply(List.of(dnaA, dnaC, dnaG, dnaT));
+        return next(dna, evolved, fittest);
     }
 
     public String proteinG(String dna, Predicate<String> evolved, Function<List<String>, String> fittest)
     {
-        dna = dna + 'G';
         if (evolved.test(dna))
             return dna;
+
+        if (dna.hashCode() % 256 != 0)
+            return next(dna, evolved, fittest);
 
         String dnaLeft = next(dna, evolved, fittest);
         String dnaRight = next(dna, evolved, fittest);
@@ -71,41 +115,20 @@ public class DnaStack
 
     public String proteinT(String dna, Predicate<String> evolved, Function<List<String>, String> fittest)
     {
-        dna = dna + 'T';
         if (evolved.test(dna))
             return dna;
 
+        if (dna.hashCode() % 128 != 0)
+            return next(dna, evolved, fittest);
+
         String standard = next(dna, evolved, fittest);
-        while (true)
+        for (int i = 2; i-- > 0;)
         {
             String candidate = next(dna, evolved, fittest);
             if (candidate.equals(fittest.apply(List.of(standard, candidate))))
                 return candidate;
         }
-    }
-
-    private static void unlimitedTrial()
-    {
-        DnaStack dna = new DnaStack();
-        try
-        {
-            System.err.println(dna.next("", s -> false, l -> l.get(l.hashCode() % l.size())));
-        }
-        catch(Throwable t)
-        {
-            System.err.printf("%s: %s%n", Thread.currentThread(), t.toString());
-        }
-        finally
-        {
-            System.err.printf("%s: maxDepth=%d%n", Thread.currentThread(), dna.maxDepth);
-        }
-    }
-
-    public static void main(String... args) throws Exception
-    {
-        unlimitedTrial();
-
-        Thread.builder().virtual().task(DnaStack::unlimitedTrial).start().join();
+        return standard;
     }
 
 }
