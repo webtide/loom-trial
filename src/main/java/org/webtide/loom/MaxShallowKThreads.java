@@ -1,8 +1,5 @@
 package org.webtide.loom;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.LongAdder;
 
 public class MaxShallowKThreads

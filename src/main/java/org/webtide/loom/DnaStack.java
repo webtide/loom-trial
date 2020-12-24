@@ -1,6 +1,5 @@
 package org.webtide.loom;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -131,4 +130,8 @@ public class DnaStack
         return standard;
     }
 
+    public static void main(String... arg ) throws Exception
+    {
+        warmup();
+    }
 }

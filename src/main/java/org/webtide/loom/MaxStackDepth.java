@@ -25,15 +25,34 @@ public class MaxStackDepth
 
     public static void main(String... args) throws Exception
     {
-        DnaStack.warmup();
         Sample kThreadSample = new Sample();
         Sample vThreadSample = new Sample();
 
+        // before warmup
         // Test the stacks depths without limit to see what can be achieved
         Thread thread0 = Thread.builder().task(() -> trial(kThreadSample)).start();
         Thread vthread0 = Thread.builder().virtual().task(() -> trial(vThreadSample)).start();
         Thread vthread1 = Thread.builder().virtual().task(() -> trial(vThreadSample)).start();
         Thread thread1 = Thread.builder().task(() -> trial(kThreadSample)).start();
+        thread0.join();
+        vthread0.join();
+        vthread1.join();
+        thread1.join();
+
+        System.err.println("result: " + result.longValue());
+        System.err.println("kthread maxDepth: " + kThreadSample);
+        System.err.println("vthread maxDepth: " + vThreadSample);
+
+        kThreadSample.reset();
+        vThreadSample.reset();
+
+        DnaStack.warmup();
+
+        // Test the stacks depths without limit to see what can be achieved
+        thread0 = Thread.builder().task(() -> trial(kThreadSample)).start();
+        vthread0 = Thread.builder().virtual().task(() -> trial(vThreadSample)).start();
+        vthread1 = Thread.builder().virtual().task(() -> trial(vThreadSample)).start();
+        thread1 = Thread.builder().task(() -> trial(kThreadSample)).start();
         thread0.join();
         vthread0.join();
         vthread1.join();

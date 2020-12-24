@@ -45,9 +45,9 @@ public class MaxThreads
                 result.add(d.hashCode());
             }).start();
             threads.add(t);
-            System.err.printf("%,d: free=%,d max=%,d total=%,d : %s%n",
+            System.err.printf("%,d: memory=%,d : %s%n",
                 threads.size(),
-                Runtime.getRuntime().freeMemory(), Runtime.getRuntime().maxMemory(), Runtime.getRuntime().totalMemory(),
+                Runtime.getRuntime().totalMemory(),
                 t);
 
             latch.await();
