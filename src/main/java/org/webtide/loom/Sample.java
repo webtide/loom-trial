@@ -37,6 +37,6 @@ public class Sample
     @Override
     public String toString()
     {
-        return String.format("ave:%d from:%d min:%d max:%d", average(), samples.longValue(), min.get(), max.get());
+        return String.format("ave:%,d from:%,d min:%,d max:%,d", average(), samples.longValue(), min.get(), max.get());
     }
 }
