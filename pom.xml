@@ -3,6 +3,18 @@
   <groupId>org.eclipse.jetty</groupId>
   <artifactId>build-resources</artifactId>
   <version>9.4.36-SNAPSHOT</version>
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-util</artifactId>
+      <version>9.4.30.v20200611</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-core</artifactId>
+      <version>1.21</version>
+    </dependency>
+  </dependencies>
   <packaging>jar</packaging>
   <name>Jetty :: Build Resources</name>
 
