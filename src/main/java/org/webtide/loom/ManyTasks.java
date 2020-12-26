@@ -4,11 +4,8 @@ import java.security.SecureRandom;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import org.eclipse.jetty.util.thread.ExecutionStrategy;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.eclipse.jetty.util.thread.strategy.EatWhatYouKill;
 import org.openjdk.jmh.infra.Blackhole;
 
 public class ManyTasks
@@ -98,11 +95,11 @@ public class ManyTasks
 
     public static void main(String... args) throws Exception
     {
-        warmup(20_000);
+        warmup(100_000);
 
         System.err.println("======");
-        System.err.printf("Pooled  K Threads %,dms%n", TimeUnit.NANOSECONDS.toMillis(testThreadPool(100_000)));
-        System.err.printf("Spawned V Threads %,dms%n", TimeUnit.NANOSECONDS.toMillis(testVThreads(100_000)));
+        System.err.printf("Pooled  K Threads %,dms%n", TimeUnit.NANOSECONDS.toMillis(testThreadPool(400_000)));
+        System.err.printf("Spawned V Threads %,dms%n", TimeUnit.NANOSECONDS.toMillis(testVThreads(400_000)));
         System.err.println("======");
         System.err.println(FakeDataBase.getResult());
     }

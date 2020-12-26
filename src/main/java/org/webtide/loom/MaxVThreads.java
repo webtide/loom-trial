@@ -26,6 +26,7 @@ public class MaxVThreads
                 }
             }).start();
             threads.add(thread);
+            started.await();
             System.err.printf("%s: %,d: memory=%,d%n",
                 thread,
                 threads.size(),

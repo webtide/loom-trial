@@ -1,7 +1,6 @@
 package org.webtide.loom;
 
 import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.LongAdder;
@@ -21,7 +20,7 @@ public class FakeDataBase
         POOL.acquire();
 
         // pretend to talk to a remote server
-        Thread.sleep(10 + RANDOM.nextInt(10));
+        Thread.sleep(1 + RANDOM.nextInt(5));
 
         // pretend to get a result from the database
         Object result = Long.toHexString(key.hashCode() + RANDOM.nextLong()).repeat(5 + RANDOM.nextInt(5));
