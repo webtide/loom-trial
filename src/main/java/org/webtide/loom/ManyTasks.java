@@ -54,8 +54,8 @@ public class ManyTasks
         CountDownLatch warmup = new CountDownLatch(tasks * 2);
         for (int i = 0 ; i < tasks; i++)
         {
-            Thread.builder().task(newTask(warmup)).start();
-            Thread.builder().virtual().task(newTask(warmup)).start();
+            Thread.ofPlatform().start(newTask(warmup));
+            Thread.ofVirtual().start(newTask(warmup));
         }
         warmup.await();
     }
@@ -88,7 +88,7 @@ public class ManyTasks
         long started = System.nanoTime();
         // run tasks with a thread pool
         for (int i = 0 ; i < tasks; i++)
-            Thread.builder().virtual().task(newTask(latch)).start();
+            Thread.ofVirtual().start(newTask(latch));
         latch.await();
         return System.nanoTime() - started;
     }

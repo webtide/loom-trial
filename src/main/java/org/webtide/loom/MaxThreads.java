@@ -21,10 +21,13 @@ public class MaxThreads
         {
             long start = System.nanoTime();
             CountDownLatch latch = new CountDownLatch(1);
-            Thread.Builder builder = Thread.builder();
-            if (virtual)
-                builder = builder.virtual();
-            Thread t = builder.task(() ->
+            Thread.Builder builder;
+            if (virtual) {
+                builder = Thread.ofVirtual();
+            } else {
+                builder = Thread.ofPlatform();
+            }
+            Thread t = builder.start(() ->
             {
                 String d = dna.next("", s ->
                     {
@@ -43,7 +46,7 @@ public class MaxThreads
                     },
                     l -> l.get(0));
                 result.add(d.hashCode());
-            }).start();
+            });
             threads.add(t);
             System.err.printf("%,d: memory=%,d : %s%n",
                 threads.size(),
