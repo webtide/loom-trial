@@ -38,8 +38,8 @@ public class DnaStack
         for (int i = 1; i < 1000; i++)
         {
             final int warmup = i;
-            Thread.builder().task(() -> DnaStack.warmup(kThreadSample, warmup)).start().join();
-            Thread.builder().virtual().task(() -> DnaStack.warmup(vThreadSample, warmup)).start().join();
+            Thread.ofPlatform().start(() -> DnaStack.warmup(kThreadSample, warmup)).join();
+            Thread.ofVirtual().start(() -> DnaStack.warmup(vThreadSample, warmup)).join();
 
             System.err.println("WARMUP result: " + result.longValue());
             System.err.println("WARMUP kthread maxDepth: " + kThreadSample);

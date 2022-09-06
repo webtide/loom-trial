@@ -15,12 +15,12 @@ public class StartThreads
         for (int i = 0; i < 1000; i++)
         {
             long start = System.nanoTime();
-            Thread.builder().task(() -> kSample.accept(start)).start().join();
+            Thread.ofPlatform().start(() -> kSample.accept(start)).join();
         }
         for (int i = 0; i < 1000; i++)
         {
             long start = System.nanoTime();
-            Thread.builder().virtual().task(() -> vSample.accept(start)).start().join();
+            Thread.ofVirtual().start(() -> vSample.accept(start)).join();
         }
 
         kStart.reset();
@@ -30,12 +30,12 @@ public class StartThreads
         for (int i = 0; i < 1000; i++)
         {
             long start = System.nanoTime();
-            Thread.builder().task(() -> kSample.accept(start)).start().join();
+            Thread.ofPlatform().start(() -> kSample.accept(start)).join();
         }
         for (int i = 0; i < 1000; i++)
         {
             long start = System.nanoTime();
-            Thread.builder().virtual().task(() -> vSample.accept(start)).start().join();
+            Thread.ofVirtual().start(() -> vSample.accept(start)).join();
         }
 
         System.err.printf("kStart(ns) %s%n", kStart);

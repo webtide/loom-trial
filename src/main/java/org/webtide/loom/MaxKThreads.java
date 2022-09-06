@@ -13,7 +13,7 @@ public class MaxKThreads
         while (threads.size() < 1_000_000)
         {
             CountDownLatch started = new CountDownLatch(1);
-            Thread thread = Thread.builder().task(() ->
+            Thread thread = Thread.ofPlatform().start(() ->
             {
                 try
                 {
@@ -24,7 +24,7 @@ public class MaxKThreads
                 {
                     e.printStackTrace();
                 }
-            }).start();
+            });
             threads.add(thread);
             System.err.printf("%s: %,d: memory=%,d%n",
                 thread,

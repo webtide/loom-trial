@@ -30,10 +30,10 @@ public class MaxStackDepth
 
         // before warmup
         // Test the stacks depths without limit to see what can be achieved
-        Thread thread0 = Thread.builder().task(() -> trial(kThreadSample)).start();
-        Thread vthread0 = Thread.builder().virtual().task(() -> trial(vThreadSample)).start();
-        Thread vthread1 = Thread.builder().virtual().task(() -> trial(vThreadSample)).start();
-        Thread thread1 = Thread.builder().task(() -> trial(kThreadSample)).start();
+        Thread thread0 = Thread.ofPlatform().start(() -> trial(kThreadSample));
+        Thread vthread0 = Thread.ofVirtual().start(() -> trial(vThreadSample));
+        Thread vthread1 = Thread.ofVirtual().start(() -> trial(vThreadSample));
+        Thread thread1 = Thread.ofPlatform().start(() -> trial(kThreadSample));
         thread0.join();
         vthread0.join();
         vthread1.join();
@@ -49,10 +49,10 @@ public class MaxStackDepth
         DnaStack.warmup();
 
         // Test the stacks depths without limit to see what can be achieved
-        thread0 = Thread.builder().task(() -> trial(kThreadSample)).start();
-        vthread0 = Thread.builder().virtual().task(() -> trial(vThreadSample)).start();
-        vthread1 = Thread.builder().virtual().task(() -> trial(vThreadSample)).start();
-        thread1 = Thread.builder().task(() -> trial(kThreadSample)).start();
+        thread0 = Thread.ofPlatform().start(() -> trial(kThreadSample));
+        vthread0 = Thread.ofVirtual().start(() -> trial(vThreadSample));
+        vthread1 = Thread.ofVirtual().start(() -> trial(vThreadSample));
+        thread1 = Thread.ofPlatform().start(() -> trial(kThreadSample));
         thread0.join();
         vthread0.join();
         vthread1.join();

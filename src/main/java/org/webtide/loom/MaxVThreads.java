@@ -13,7 +13,7 @@ public class MaxVThreads
         while (threads.size() < 1_000_000)
         {
             CountDownLatch started = new CountDownLatch(1);
-            Thread thread = Thread.builder().virtual().task(() ->
+            Thread thread = Thread.ofVirtual().start(() ->
             {
                 try
                 {
@@ -24,7 +24,7 @@ public class MaxVThreads
                 {
                     e.printStackTrace();
                 }
-            }).start();
+            });
             threads.add(thread);
             started.await();
             System.err.printf("%s: %,d: memory=%,d%n",

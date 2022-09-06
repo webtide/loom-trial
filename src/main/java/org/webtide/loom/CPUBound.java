@@ -22,8 +22,8 @@ public class CPUBound
         CountDownLatch warm = new CountDownLatch(2 * warmup);
         for (int i = 0; i < warmup; i++)
         {
-            Thread.builder().task(newTask(warm)).start();
-            Thread.builder().virtual().task(newTask(warm)).start();
+            Thread.ofPlatform().start(newTask(warm));
+            Thread.ofVirtual().start(newTask(warm));
         }
         warm.await();
 
@@ -33,7 +33,7 @@ public class CPUBound
         long start = System.nanoTime();
         CountDownLatch latch = new CountDownLatch(tasks);
         for (int i = 0; i < tasks; i++)
-            Thread.builder().task(newTask(latch)).start();
+            Thread.ofPlatform().start(newTask(latch));
         latch.await();
         System.err.printf("Kernel threads : %,dns%n", System.nanoTime() - start);
 
@@ -41,7 +41,7 @@ public class CPUBound
         start = System.nanoTime();
         latch = new CountDownLatch(tasks);
         for (int i = 0; i < tasks; i++)
-            Thread.builder().virtual().task(newTask(latch)).start();
+            Thread.ofVirtual().start(newTask(latch));
         latch.await();
         System.err.printf("Virtual threads: %,dns%n", System.nanoTime() - start);
 
@@ -49,7 +49,7 @@ public class CPUBound
         start = System.nanoTime();
         latch = new CountDownLatch(tasks);
         for (int i = 0; i < tasks; i++)
-            Thread.builder().virtual().task(newTask(latch)).start();
+            Thread.ofVirtual().start(newTask(latch));
         latch.await();
         System.err.printf("Virtual threads: %,dns%n", System.nanoTime() - start);
 
@@ -57,7 +57,7 @@ public class CPUBound
         start = System.nanoTime();
         latch = new CountDownLatch(tasks);
         for (int i = 0; i < tasks; i++)
-            Thread.builder().task(newTask(latch)).start();
+            Thread.ofPlatform().start(newTask(latch));
         latch.await();
         System.err.printf("Kernel threads : %,dns%n", System.nanoTime() - start);
     }
